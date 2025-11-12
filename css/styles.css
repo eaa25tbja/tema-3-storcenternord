@@ -341,16 +341,14 @@ body {
   width: 100vw;
   height: 100vh;
 }
-
-.mermaid {
+*/
+.girl {
   position: absolute;
-  bottom: 40%;
-  left: 0;
-  width: 150px;
   animation: swim 6s ease-in-out infinite,
     tail 1s ease-in-out infinite alternate;
-}*/
-/* lille hale bevægelse
+}
+
+/* lille hale bevægelse */
 @keyframes tail {
   from {
     rotate: 0deg;
@@ -358,4 +356,4 @@ body {
   to {
     rotate: 5deg;
   }
-}*/
+}

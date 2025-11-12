@@ -149,7 +149,7 @@ if (sun && scene) {
 }
 
 // lille bevægelse af havfrue
-const mermaid = document.querySelector(".mermaid");
+const mermaid = document.getElementById("mermaid");
 
 function randomMove() {
   const randomY = Math.random() * 40 + 30; // procent af højden
