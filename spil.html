@@ -8,9 +8,13 @@
   </head>
   <body>
     <div id="game">
+      <!-- Score -->
+      <div id="score">Point: 0</div>
+
       <!-- Pacman/dodger -->
       <div id="dodger" aria-label="Pacman"></div>
 
+      <!-- Knapper -->
       <div class="controls">
         <img
           src="pacman-img/upbtn.png"
@@ -42,6 +46,13 @@
       <a href="index.html" class="home-button" aria-label="Til forsiden">
         <img src="pacman-img/havfrue-knap.png" alt="Havfrue-knap" />
       </a>
+
+      <!-- Game over-skærm -->
+      <div id="gameOverScreen" class="game-over">
+        <h1>GAME OVER</h1>
+        <p class="dine-point">Dine point: <span id="finalScore">0</span></p>
+        <button id="restartBtn">Spil igen</button>
+      </div>
     </div>
 
     <!-- Lyd -->

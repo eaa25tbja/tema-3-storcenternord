@@ -61,7 +61,7 @@
 .bg {
   position: absolute;
   inset: 0; /* fyld hele .scene */
-  background-image: url("../img/baggrund.png");
+  background-image: url("../pacman-img/baggrund.png");
   background-repeat: no-repeat;
   background-position: center bottom;
   background-size: cover;
@@ -193,24 +193,49 @@
   }
 }
 
-/* fish3 kuglefisk */
+/* ------- KUGLEFISK ------*/
 .fish3 {
   position: absolute;
   bottom: 63.5vh;
   width: var(--fish-w);
   max-width: 28vw;
+  height: 18vw;
   right: calc(-1 * var(--off-fish3));
-  z-index: 1; /* lag af bilerne */
-  animation: fish3 20.1s linear infinite;
   cursor: pointer;
+
+  /* Kun svømmeanimation her */
+  animation: fish3Move 20.1s linear infinite;
 }
-@keyframes fish3 {
+
+/* Indre: selve fisken, der skifter mellem to billeder */
+.fish3-inner {
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+
+  /* Kun billed-skift her – ingen transform */
+  animation: blob 2s steps(2) infinite;
+}
+
+/* Svømning fra side til side */
+@keyframes fish3Move {
   0% {
-    transform: translateX(0) rotateY(180deg); /* har fjernet rotaeY så den nu er flippet vandrettet */
+    transform: translateX(0) rotateY(180deg);
   }
   90%,
   100% {
     transform: translateX(calc(-100vw - var(--off-fish3))) rotateY(180deg);
+  }
+}
+@keyframes blob {
+  0%,
+  49% {
+    background-image: url("../img/kuglefisklille.png");
+  }
+  50%,
+  100% {
+    background-image: url("../img/kuglefiskstor.png");
   }
 }
 

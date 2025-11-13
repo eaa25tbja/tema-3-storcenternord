@@ -1,29 +1,167 @@
 "use strict";
 
 // Fanger elementerne fra HTML
-const game = document.getElementById("game"); // hele spilområdet (baggrunden)
-const dodger = document.getElementById("dodger"); // selve fisken/pacman-figuren
+const game = document.getElementById("game"); // hele spilområdet
+const dodger = document.getElementById("dodger"); // selve fisken/pacman
 
-// Sæt fisken i midten af skærmen når siden loader
+// Score & game over
+const scoreElement = document.getElementById("score");
+const gameOverScreen = document.getElementById("gameOverScreen");
+const finalScoreElement = document.getElementById("finalScore");
+const restartBtn = document.getElementById("restartBtn");
+
+let score = 0;
+let isGameOver = false;
+
+// Arrays til mad og fjende
+let foods = [];
+let enemy = null;
+
 window.addEventListener("load", () => {
-  const game = document.getElementById("game");
   const centerX = (game.clientWidth - dodger.offsetWidth) / 2;
   const centerY = (game.clientHeight - dodger.offsetHeight) / 2;
   dodger.style.left = centerX + "px";
   dodger.style.bottom = centerY + "px";
+
+  spawnNewFoodBatch();
+  createEnemy();
 });
 
 // Hvor mange pixels fisken flytter sig hver gang man trykker
-const step = 10;
+const step = 15;
 
 // Regner ud hvor langt man må bevæge sig i hver retning
 function maxX() {
-  // bredden på spillet - bredden på fisken = højre grænse
   return game.clientWidth - dodger.offsetWidth;
 }
 function maxY() {
-  // højden på spillet - højden på fisken = øvre grænse
   return game.clientHeight - dodger.offsetHeight;
+}
+
+/* ------------------------------------------
+   Hjælpefunktioner
+--------------------------------------------- */
+
+function updateScore() {
+  scoreElement.textContent = "Point: " + score;
+}
+
+function isColliding(a, b) {
+  const r1 = a.getBoundingClientRect();
+  const r2 = b.getBoundingClientRect();
+  return !(
+    r1.right < r2.left ||
+    r1.left > r2.right ||
+    r1.bottom < r2.top ||
+    r1.top > r2.bottom
+  );
+}
+
+function checkCollisions() {
+  if (isGameOver) return;
+
+  // Tjek kollision med mad
+  foods = foods.filter((foodEl) => {
+    if (isColliding(dodger, foodEl)) {
+      score++;
+      updateScore();
+      foodEl.remove();
+      return false;
+    }
+    return true;
+  });
+
+  // Hvis der ikke er mad tilbage → spawn nyt batch
+  if (foods.length === 0) {
+    spawnNewFoodBatch();
+  }
+
+  // Tjek kollision med fjenden
+  if (enemy && isColliding(dodger, enemy)) {
+    triggerGameOver();
+  }
+}
+
+/* ------------------------------------------
+   Mad & fjendefisk
+--------------------------------------------- */
+
+function spawnNewFoodBatch() {
+  foods = []; // reset array
+
+  for (let i = 0; i < 4; i++) {
+    const x = Math.random() * (game.clientWidth - 50);
+    const y = Math.random() * (game.clientHeight - 50);
+    spawnFood(x, y);
+  }
+}
+
+function spawnFoodItems() {
+  spawnFood(100, 150);
+  spawnFood(400, 250);
+  spawnFood(700, 180);
+  spawnFood(300, 400);
+
+  console.log("Foods:", foods);
+}
+
+function createEnemy() {
+  enemy = document.createElement("div");
+  enemy.classList.add("enemy");
+
+  enemy.style.left = "60%";
+  enemy.style.bottom = "60%";
+
+  game.appendChild(enemy);
+
+  moveEnemyRandom(); //
+}
+
+/* ------------------------------------------
+   Enemy RANDOM MOVEMENT
+--------------------------------------------- */
+
+function moveEnemyRandom() {
+  if (!enemy || isGameOver) return;
+
+  // Vælg et random sted inden for game-området
+  const maxX = game.clientWidth - enemy.offsetWidth;
+  const maxY = game.clientHeight - enemy.offsetHeight;
+
+  const targetX = Math.random() * maxX;
+  const targetY = Math.random() * maxY;
+
+  // Hvor lang tid skal bevægelsen tage?
+  const duration = 2000 + Math.random() * 2000; // mellem 2-4 sekunder
+
+  enemy.style.transition = `left ${duration}ms linear, bottom ${duration}ms linear`;
+
+  enemy.style.left = targetX + "px";
+  enemy.style.bottom = targetY + "px";
+
+  // Når den er færdig → ny random movement
+  setTimeout(moveEnemyRandom, duration);
+}
+
+/* ------------------------------------------
+   Game Over
+--------------------------------------------- */
+
+function triggerGameOver() {
+  if (isGameOver) return;
+  isGameOver = true;
+
+  playGameoverSound();
+  finalScoreElement.textContent = score;
+  gameOverScreen.classList.add("show");
+}
+
+// Restart-knap
+if (restartBtn) {
+  restartBtn.addEventListener("click", () => {
+    // Easiest: reload siden
+    window.location.reload();
+  });
 }
 
 /* ------------------------------------------
@@ -31,48 +169,54 @@ function maxY() {
 --------------------------------------------- */
 
 function moveDodgerLeft() {
-  // Finder ud af hvor langt til venstre fisken er
+  if (isGameOver) return;
+
   const left = parseInt(dodger.style.left) || 0;
 
-  // Hvis der stadig er plads, flyt til venstre
   if (left > 0) {
     dodger.style.left = left - step + "px";
+    checkCollisions();
   } else {
-    // Ellers, hvis man rammer kanten → spil game over-lyd
-    playGameoverSound();
+    triggerGameOver();
   }
 }
 
 function moveDodgerRight() {
+  if (isGameOver) return;
+
   const left = parseInt(dodger.style.left) || 0;
 
-  // Må ikke bevæge sig længere end højre kant
   if (left < maxX()) {
     dodger.style.left = left + step + "px";
+    checkCollisions();
   } else {
-    playGameoverSound();
+    triggerGameOver();
   }
 }
 
 function moveDodgerUp() {
+  if (isGameOver) return;
+
   const bottom = parseInt(dodger.style.bottom) || 0;
 
-  // Må ikke gå højere end toppen af skærmen
   if (bottom < maxY()) {
     dodger.style.bottom = bottom + step + "px";
+    checkCollisions();
   } else {
-    playGameoverSound();
+    triggerGameOver();
   }
 }
 
 function moveDodgerDown() {
+  if (isGameOver) return;
+
   const bottom = parseInt(dodger.style.bottom) || 0;
 
-  // Må ikke gå længere ned end bunden
   if (bottom > 0) {
     dodger.style.bottom = bottom - step + "px";
+    checkCollisions();
   } else {
-    playGameoverSound();
+    triggerGameOver();
   }
 }
 
@@ -80,27 +224,25 @@ function moveDodgerDown() {
    Når man trykker på piletasterne
 --------------------------------------------- */
 document.addEventListener("keydown", function (e) {
-  // Venstre pil
+  if (isGameOver) return;
+
   if (e.key === "ArrowLeft") {
     moveDodgerLeft();
     playSoundOnMovement();
-    dodger.style.transform = "scaleX(1)"; // spejlvend mod venstre
+    dodger.style.transform = "scaleX(1)";
   }
 
-  // Højre pil
   if (e.key === "ArrowRight") {
     moveDodgerRight();
     playSoundOnMovement();
-    dodger.style.transform = "scaleX(-1)"; // spejlvend mod højre
+    dodger.style.transform = "scaleX(-1)";
   }
 
-  // Op
   if (e.key === "ArrowUp") {
     moveDodgerUp();
     playSoundOnMovement();
   }
 
-  // Ned
   if (e.key === "ArrowDown") {
     moveDodgerDown();
     playSoundOnMovement();
@@ -112,27 +254,24 @@ document.addEventListener("keydown", function (e) {
 --------------------------------------------- */
 const movementSound = document.getElementById("movementSound");
 function playSoundOnMovement() {
-  // Nulstil lyden og spil den igen, så man hører et lille “klik” hver gang man flytter sig
   movementSound.currentTime = 0;
   movementSound.play();
 }
 
 const gameoverSound = document.getElementById("gameoverSound");
 function playGameoverSound() {
-  // Stop bevægelseslyd og spil game over-lyd
   movementSound.currentTime = 0;
   gameoverSound.play();
 }
 
 /* ------------------------------------------
-   Knapper på skærmen (mobil/tablet)
+   Knapper på skærmen
 --------------------------------------------- */
 const btnUp = document.getElementById("btnUp");
 const btnDown = document.getElementById("btnDown");
 const btnLeft = document.getElementById("btnLeft");
 const btnRight = document.getElementById("btnRight");
 
-// Klik-handlinger for knapperne
 if (btnLeft)
   btnLeft.addEventListener("click", () => {
     moveDodgerLeft();
