@@ -32,7 +32,7 @@ window.addEventListener("load", () => {
   createEnemy();
 
   //baggrundsmusik
-  bgMusic.volume = 0.4;
+  bgMusic.volume = 0.2;
   bgMusic.play();
 });
 

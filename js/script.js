@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const bobleBillede = document.getElementById("taleboble-billede");
   //baggrundsmusik
   const bgMusic = document.getElementById("bgMusic");
-  bgMusic.volume = 0.4;
+  bgMusic.volume = 0.2;
   bgMusic.play();
 
   // Funktion: Skift havfruens mund
