@@ -144,19 +144,26 @@ body {
 .home-button img {
   width: 100%;
   border-radius: 50%;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 15px rgba(219, 165, 165, 0.25);
 }
 
 /* Score-tekst */
 #score {
   position: absolute;
-  top: 2vh;
+  bottom: 2vh;
   left: 2vw;
-  font-size: 2rem;
-  color: #fff;
-  text-shadow: 0 0 8px #000;
-  z-index: 20;
+
+  background-color: #fcd810; /* samme gule farve */
+  color: black;
+  font-size: 1.6rem; /* mindre og mere kompakt som dit billede */
+  font-weight: 700; /* tyk som i billedet */
   font-family: system-ui, sans-serif;
+
+  padding: 8px 20px; /* luft rundt om teksten */
+  border-radius: 15px; /* de runde hjørner */
+  letter-spacing: 1px; /* lidt mere afstand i teksten */
+
+  z-index: 20;
 }
 
 /* Fiskemad */

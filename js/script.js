@@ -7,6 +7,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const havfrueAaben = document.querySelector(".havfrue-åben");
   const boble = document.querySelector(".taleboble");
   const bobleBillede = document.getElementById("taleboble-billede");
+  //baggrundsmusik
+  const bgMusic = document.getElementById("bgMusic");
+  bgMusic.volume = 0.4;
+  bgMusic.play();
 
   // Funktion: Skift havfruens mund
   function havfrueSnak(start) {

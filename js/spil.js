@@ -1,6 +1,6 @@
 "use strict";
 
-// Fanger elementerne fra HTML
+// Henter elementerne fra HTML
 const game = document.getElementById("game"); // hele spilområdet
 const dodger = document.getElementById("dodger"); // selve fisken/pacman
 
@@ -10,6 +10,9 @@ const gameOverScreen = document.getElementById("gameOverScreen");
 const finalScoreElement = document.getElementById("finalScore");
 const restartBtn = document.getElementById("restartBtn");
 
+//baggrundsmusik
+const bgMusic = document.getElementById("bgMusic");
+
 let score = 0;
 let isGameOver = false;
 
@@ -18,13 +21,19 @@ let foods = [];
 let enemy = null;
 
 window.addEventListener("load", () => {
+  //starter dodger i midten af skærmen
   const centerX = (game.clientWidth - dodger.offsetWidth) / 2;
   const centerY = (game.clientHeight - dodger.offsetHeight) / 2;
   dodger.style.left = centerX + "px";
   dodger.style.bottom = centerY + "px";
 
+  //tilføjer ond fisk og mad på siden
   spawnNewFoodBatch();
   createEnemy();
+
+  //baggrundsmusik
+  bgMusic.volume = 0.4;
+  bgMusic.play();
 });
 
 // Hvor mange pixels fisken flytter sig hver gang man trykker
